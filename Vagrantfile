@@ -41,7 +41,7 @@ Vagrant.configure(2) do |config|
     :group => "vagrant",
     :mount_options => ['dmode=777','fmode=777']
   )
-  
+    
   config.vm.provider :virtualbox do |vb|
     # Tell VirtualBox that we're expecting a UI for the VM
     vb.gui = true
@@ -80,7 +80,11 @@ Vagrant.configure(2) do |config|
   else
     config.vm.provision :shell, path: File.join( "provision", "bootstrap.sh" )
   end
-    
+   
+
+  #Turn off auto update before first reload 
+  config.vbguest.auto_update = false 
+
   #
   # Reload/Reboot the VM
   #

@@ -156,3 +156,7 @@ mkdir /opt/gnuarmeclipse
 mv openocd /opt/gnuarmeclipse
 
 rm openocd-0.10.0.tar.gz
+
+if [[ -f /opt/VBoxGuestAdditions-5.0.16 ]]; then
+  ln -s /opt/VBoxGuestAdditions-5.0.16/lib/VBoxGuestAdditions /usr/lib/VBoxGuestAdditions
+fi
