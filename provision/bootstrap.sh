@@ -130,3 +130,29 @@ sudo invoke-rc.d apparmor stop
 sudo update-rc.d -f apparmor remove
 
 apt-get -y -f purge thunderbird libreoffice empathy ubuntu-docs gnome-user-guide deja-dup xterm remmina transmission brasero cheese totem network-manager
+
+
+echo -e "\n**** Grabbing the GCC ARM Embedded Toolkit for GCC 5.2 ****\n"
+curl -sLo gcc-arm-none-eabi-5_2-2015q4.tar.bz2 https://launchpad.net/gcc-arm-embedded/5.0/5-2015-q4-major/+download/gcc-arm-none-eabi-5_2-2015q4-20151219-linux.tar.bz2 >/dev/null
+
+if [[ -f gcc-arm-none-eabi-5_2-2015q4.tar.bz2 ]]; then
+    echo -e "\n******  gcc-arm-none-eabi-5_2-2015q4.tar.bz2 has been downloaded  ******\n"
+fi
+
+tar -xjf gcc-arm-none-eabi-5_2-2015q4.tar.bz2
+mv gcc-arm-none-eabi-5_2-2015q4 /opt/
+rm gcc-arm-none-eabi-5_2-2015q4.tar.bz2
+
+# Install OpenOCD from GNU ARM Eclipse project
+echo -e "\n**** Installing OpenOCD 0.10.0 from built tar ****\n"
+curl -sLo openocd-0.10.0.tar.gz 'https://github.com/gnuarmeclipse/openocd/releases/download/gae-0.10.0-20160110/gnuarmeclipse-openocd-debian64-0.10.0-201601101000-dev.tgz' > /dev/null
+
+if [[ -f openocd-0.10.0.tar.gz ]]; then
+    echo -e "\n******  openocd-0.10.0.tar.gz has been downloaded  ******\n"
+fi
+
+tar xzf openocd-0.10.0.tar.gz
+mkdir /opt/gnuarmeclipse
+mv openocd /opt/gnuarmeclipse
+
+rm openocd-0.10.0.tar.gz
