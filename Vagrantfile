@@ -9,12 +9,21 @@ if ARGV[0] == "up" then
     system("vagrant plugin install vagrant-vbguest")
     has_installed_plugins = true
   end
-  
+
+  unless Vagrant.has_plugin?("vagrant-reload")
+    system("vagrant plugin install vagrant-reload")
+    has_installed_plugins = true
+  end
+
+  unless Vagrant.has_plugin?("copy_my_conf")
+    system("vagrant plugin install copy_my_conf")
+    has_installed_plugins = true
+  end
+
   if has_installed_plugins then
     puts "Vagrant plugins were installed. Please run vagrant up again to install the VM"
     exit
   end
-
 end
 
 vagrant_dir = File.expand_path(File.dirname(__FILE__))
@@ -22,6 +31,16 @@ vagrant_dir = File.expand_path(File.dirname(__FILE__))
 Vagrant.configure(2) do |config|
   # Ubuntu 14.04 LTS
   config.vm.box = "ubuntu/trusty64"
+  config.vm.hostname = "stm32-eclipse"
+
+  config.ssh.forward_agent = true
+  config.ssh.forward_x11 = true
+
+  config.vm.synced_folder(".", "/vagrant",
+    :owner => "vagrant",
+    :group => "vagrant",
+    :mount_options => ['dmode=777','fmode=777']
+  )
   
   config.vm.provider :virtualbox do |vb|
     # Tell VirtualBox that we're expecting a UI for the VM
@@ -47,7 +66,6 @@ Vagrant.configure(2) do |config|
     BetterUSB.usbfilter_add(vb, "0x0483", "0x374b", "ST Link v2.1 Nucleo")
 
   end
-
   
   #
   # bootstrap.sh or provision-custom.sh
@@ -62,7 +80,12 @@ Vagrant.configure(2) do |config|
   else
     config.vm.provision :shell, path: File.join( "provision", "bootstrap.sh" )
   end
-
+    
+  #
+  # Reload/Reboot the VM
+  #
+  config.vm.provision :reload
+  
   #
   # provision-as-vagrant-user.sh
   #
@@ -71,4 +94,10 @@ Vagrant.configure(2) do |config|
   if File.exist?(File.join(vagrant_dir,'provision','provision-as-vagrant-user.sh')) then
     config.vm.provision :shell, path: File.join( "provision", "provision-as-vagrant-user.sh" ), :privileged => false
   end
+  
+  #
+  # Reload/Reboot the VM
+  #
+  config.vm.provision :reload
+ 
 end
